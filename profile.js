@@ -11,13 +11,13 @@ window.PORTFOLIO = {
   portrait: {
     image: "", // Example: "assets/yanis.webp"
     alt: "Portrait of Yanis Essayh",
-    caption: ""
+    caption: "",
   },
   capstone: {
     projectUrl: "",
     videoUrl: "",
     image: "", // Example: "assets/blood-and-lineage.webp"; use your own project media.
     imageAlt: "",
-    imageCaption: ""
-  }
+    imageCaption: "",
+  },
 };

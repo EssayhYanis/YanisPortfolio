@@ -3,7 +3,7 @@
 window.PORTFOLIO = {
   name: "Yanis Essayh",
   email: "essayhyanis@gmail.com",
-  resume: "", // Example: "assets/resume.pdf" (copy your PDF into dist/assets/)
+  resume: "", // Example: "assets/resume.pdf" (copy your PDF into assets/)
   github: "https://github.com/EssayhYanis",
   linkedin: "https://www.linkedin.com/in/yanisessayh/",
   youtube: "",

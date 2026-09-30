@@ -129,11 +129,11 @@ body[data-page="Projects"] .ambient-piece--hunter {
   --piece-opacity: 0.16;
 }
 
-body[data-page="Contact"] .ambient-piece--zelda {
-  right: -7vw;
-  bottom: -10vh;
-  --piece-width: min(64vw, 760px);
-  --piece-opacity: 0.2;
+body[data-page="Contact"] .ambient-piece--star-wars {
+  right: -3vw;
+  bottom: -3vh;
+  --piece-width: min(54vw, 700px);
+  --piece-opacity: 0.22;
 }
 
 @keyframes ambient-drift {

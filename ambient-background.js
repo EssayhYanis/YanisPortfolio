@@ -4,19 +4,49 @@
   const page = document.body.dataset.page;
   const scenes = {
     Home: [
-      { type: "video", source: "assets/dante-vs-vergil.mp4", key: "white" },
-      { type: "image", source: "assets/link-vs-ganondorf.webp" },
+      {
+        type: "video",
+        source: "assets/dante-vs-vergil.mp4",
+        key: "white",
+        name: "dante",
+      },
+      {
+        type: "image",
+        source: "assets/link-vs-ganondorf.webp",
+        name: "zelda",
+      },
     ],
     About: [
-      { type: "image", source: "assets/leon-bingo.webp" },
-      { type: "image", source: "assets/link-vs-ganondorf.webp" },
+      {
+        type: "image",
+        source: "assets/leon-bingo.webp",
+        name: "leon",
+      },
+      {
+        type: "video",
+        source: "assets/dark-souls-sun-dance.mp4",
+        key: "black",
+        name: "bonfire",
+      },
     ],
     Projects: [
-      { type: "image", source: "assets/maliketh.webp" },
-      { type: "image", source: "assets/monster-hunter-chase.webp" },
+      {
+        type: "image",
+        source: "assets/maliketh.webp",
+        name: "maliketh",
+      },
+      {
+        type: "image",
+        source: "assets/monster-hunter-chase.webp",
+        name: "hunter",
+      },
     ],
     Contact: [
-      { type: "video", source: "assets/dark-souls-sun-dance.mp4", key: "black" },
+      {
+        type: "image",
+        source: "assets/link-vs-ganondorf.webp",
+        name: "zelda",
+      },
     ],
   };
 
@@ -56,7 +86,9 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   pieces.forEach((piece, index) => {
-    const className = `ambient-piece ambient-piece--${index ? "secondary" : "primary"}`;
+    const role = index ? "secondary" : "primary";
+    const className =
+      `ambient-piece ambient-piece--${role} ambient-piece--${piece.name}`;
 
     if (piece.type === "image") {
       const image = new Image();

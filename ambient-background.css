@@ -87,60 +87,53 @@ body > .skip {
   z-index: 1;
 }
 
-body[data-page="Home"] .ambient-piece--primary {
-  right: -5vw;
-  bottom: -7vh;
-  --piece-width: min(58vw, 780px);
-  --piece-opacity: 0.2;
-  --depth: 0.14;
-}
-
-body[data-page="Home"] .ambient-piece--secondary {
-  left: -5vw;
-  bottom: -4vh;
-  --piece-width: min(86vw, 1050px);
-  --piece-opacity: 0.14;
-  --depth: -0.22;
-}
-
-body[data-page="About"] .ambient-piece--primary {
-  right: 2vw;
-  top: 18vh;
-  --piece-width: clamp(150px, 21vw, 300px);
-  --piece-opacity: 0.18;
-  --depth: 0.18;
-}
-
-body[data-page="About"] .ambient-piece--secondary {
-  left: -5vw;
-  bottom: -6vh;
-  --piece-width: min(86vw, 1050px);
-  --piece-opacity: 0.14;
-  --depth: -0.2;
-}
-
-body[data-page="Projects"] .ambient-piece--primary {
-  right: -10vw;
-  bottom: -8vh;
-  --piece-width: min(67vw, 920px);
-  --piece-opacity: 0.17;
-  --depth: 0.11;
-}
-
-body[data-page="Projects"] .ambient-piece--secondary {
-  left: -3vw;
-  top: 20vh;
-  --piece-width: min(34vw, 430px);
-  --piece-opacity: 0.15;
-  --depth: -0.15;
-}
-
-body[data-page="Contact"] .ambient-piece--primary {
-  right: -50vw;
+body[data-page="Home"] .ambient-piece--dante {
+  right: -6vw;
   bottom: -5vh;
-  --piece-width: min(88vw, 1040px);
+  --piece-width: min(48vw, 620px);
+  --piece-opacity: 0.19;
+}
+
+body[data-page="Home"] .ambient-piece--zelda {
+  left: -2vw;
+  top: 31vh;
+  --piece-width: min(47vw, 600px);
+  --piece-opacity: 0.21;
+}
+
+body[data-page="About"] .ambient-piece--leon {
+  right: 3vw;
+  top: 17vh;
+  --piece-width: clamp(165px, 21vw, 270px);
   --piece-opacity: 0.2;
-  --depth: 0.15;
+}
+
+body[data-page="About"] .ambient-piece--bonfire {
+  left: -2vw;
+  bottom: -10vh;
+  --piece-width: min(68vw, 820px);
+  --piece-opacity: 0.22;
+}
+
+body[data-page="Projects"] .ambient-piece--maliketh {
+  right: -9vw;
+  bottom: -8vh;
+  --piece-width: min(62vw, 840px);
+  --piece-opacity: 0.17;
+}
+
+body[data-page="Projects"] .ambient-piece--hunter {
+  left: -2vw;
+  top: 18vh;
+  --piece-width: min(31vw, 390px);
+  --piece-opacity: 0.16;
+}
+
+body[data-page="Contact"] .ambient-piece--zelda {
+  right: -7vw;
+  bottom: -10vh;
+  --piece-width: min(64vw, 760px);
+  --piece-opacity: 0.2;
 }
 
 @keyframes ambient-drift {
@@ -213,15 +206,6 @@ body[data-page="Contact"] .ambient-piece--primary {
 
   body[data-page] .ambient-piece--secondary {
     display: none;
-  }
-
-  body[data-page="Home"] .ambient-piece--secondary,
-  body[data-page="About"] .ambient-piece--secondary {
-    display: block;
-    left: -24vw;
-    bottom: -1vh;
-    --piece-width: min(112vw, 680px);
-    --piece-opacity: 0.14;
   }
 
   .ambient-background::before {

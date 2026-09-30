@@ -927,6 +927,89 @@ nav a[aria-current="page"] {
   margin-bottom: 0;
   letter-spacing: -2px;
 }
+.media-library {
+  padding-top: 85px;
+}
+.media-library .section-heading {
+  margin-bottom: 35px;
+}
+.media-library h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  letter-spacing: -1.5px;
+  margin-bottom: 0;
+}
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.media-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: rgb(19 26 34 / 88%);
+}
+.media-frame {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #080b0f;
+  border-bottom: 1px solid var(--line);
+}
+.media-frame img,
+.media-frame video,
+.media-frame a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.media-frame img,
+.media-frame video {
+  object-fit: cover;
+}
+.media-frame img {
+  transition: transform 280ms ease, filter 280ms ease;
+}
+.media-frame a:hover img {
+  transform: scale(1.025);
+  filter: brightness(1.08);
+}
+.media-card-copy {
+  padding: 24px;
+}
+.media-card-copy .eyebrow {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.media-card-copy h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.media-card-copy p:last-child {
+  margin-bottom: 0;
+}
+.media-empty {
+  min-height: 220px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 620px);
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  padding: 42px;
+  border: 1px dashed #3a4653;
+  background:
+    linear-gradient(120deg, rgb(241 145 99 / 5%), transparent 45%),
+    rgb(19 26 34 / 58%);
+}
+.media-empty-mark {
+  color: var(--accent);
+  font: 300 68px/1 Consolas, monospace;
+}
+.media-empty h3 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+.media-empty p:last-child {
+  margin-bottom: 0;
+}
 .contact-page {
   padding-block: 15px 85px;
 }
@@ -991,5 +1074,19 @@ nav a[aria-current="page"] {
   .projects-page h1 {
     font-size: 36px;
     letter-spacing: -1px;
+  }
+  .media-library {
+    padding-top: 55px;
+  }
+  .media-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .media-empty {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 28px 24px;
+  }
+  .media-empty-mark {
+    font-size: 46px;
   }
 }

@@ -108,11 +108,11 @@ body[data-page="About"] .ambient-piece--leon {
   --piece-opacity: 0.2;
 }
 
-body[data-page="About"] .ambient-piece--bonfire {
+body[data-page="About"] .ambient-piece--solid-snake {
   left: -2vw;
-  bottom: -10vh;
-  --piece-width: min(68vw, 820px);
-  --piece-opacity: 0.22;
+  bottom: -4vh;
+  --piece-width: min(32vw, 390px);
+  --piece-opacity: 0.2;
 }
 
 body[data-page="Projects"] .ambient-piece--maliketh {
@@ -134,6 +134,13 @@ body[data-page="Contact"] .ambient-piece--star-wars {
   bottom: -3vh;
   --piece-width: min(54vw, 700px);
   --piece-opacity: 0.22;
+}
+
+body[data-page="Contact"] .ambient-piece--goku {
+  left: -2vw;
+  top: 13vh;
+  --piece-width: min(43vw, 540px);
+  --piece-opacity: 0.2;
 }
 
 @keyframes ambient-drift {

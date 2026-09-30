@@ -1,0 +1,140 @@
+.ambient-background {
+  --pointer-x: 0px;
+  --pointer-y: 0px;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 78% 25%, rgb(241 145 99 / 5%), transparent 30rem),
+    radial-gradient(circle at 14% 80%, rgb(111 145 184 / 5%), transparent 34rem);
+}
+
+body {
+  overflow-x: clip;
+}
+
+.ambient-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--bg) 0%, transparent 20%, transparent 80%, var(--bg) 100%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(255 255 255 / 1.2%) 4px);
+}
+
+.ambient-piece {
+  position: absolute;
+  display: block;
+  width: var(--piece-width, min(42vw, 620px));
+  height: auto;
+  opacity: var(--piece-opacity, 0.2);
+  filter: saturate(0.82) contrast(1.06);
+  transform: translate3d(var(--pointer-x), var(--pointer-y), 0);
+  animation: ambient-drift var(--drift-time, 13s) ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.ambient-piece--secondary {
+  animation-delay: -5s;
+  animation-direction: alternate-reverse;
+}
+
+body > .header,
+body > main,
+body > .footer,
+body > .skip {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-page="Home"] .ambient-piece--primary {
+  right: -5vw;
+  bottom: -7vh;
+  --piece-width: min(58vw, 780px);
+  --piece-opacity: 0.2;
+  --depth: 0.14;
+}
+
+body[data-page="Home"] .ambient-piece--secondary {
+  left: 2vw;
+  bottom: 4vh;
+  --piece-width: clamp(105px, 13vw, 180px);
+  --piece-opacity: 0.19;
+  --depth: -0.22;
+}
+
+body[data-page="About"] .ambient-piece--primary {
+  right: 2vw;
+  top: 18vh;
+  --piece-width: clamp(150px, 21vw, 300px);
+  --piece-opacity: 0.18;
+  --depth: 0.18;
+}
+
+body[data-page="About"] .ambient-piece--secondary {
+  left: 1vw;
+  bottom: 6vh;
+  --piece-width: clamp(100px, 13vw, 170px);
+  --piece-opacity: 0.16;
+  --depth: -0.2;
+}
+
+body[data-page="Projects"] .ambient-piece--primary {
+  right: -10vw;
+  bottom: -8vh;
+  --piece-width: min(67vw, 920px);
+  --piece-opacity: 0.17;
+  --depth: 0.11;
+}
+
+body[data-page="Projects"] .ambient-piece--secondary {
+  left: -3vw;
+  top: 20vh;
+  --piece-width: min(34vw, 430px);
+  --piece-opacity: 0.15;
+  --depth: -0.15;
+}
+
+body[data-page="Contact"] .ambient-piece--primary {
+  right: -50vw;
+  bottom: -5vh;
+  --piece-width: min(88vw, 1040px);
+  --piece-opacity: 0.2;
+  --depth: 0.15;
+}
+
+@keyframes ambient-drift {
+  from {
+    margin-top: -5px;
+  }
+  to {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .ambient-background::after {
+    background: linear-gradient(rgb(12 16 21 / 18%), rgb(12 16 21 / 60%));
+  }
+
+  body[data-page] .ambient-piece--primary {
+    right: -20vw;
+    bottom: 1vh;
+    top: auto;
+    --piece-width: min(88vw, 560px);
+    --piece-opacity: 0.14;
+  }
+
+  body[data-page] .ambient-piece--secondary {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-piece {
+    animation: none;
+    transform: none;
+  }
+}

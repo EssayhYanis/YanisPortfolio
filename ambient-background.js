@@ -28,6 +28,31 @@
   stage.setAttribute("aria-hidden", "true");
   document.body.prepend(stage);
 
+  const particleLayout = [
+    [7, 4, 17, -3, -18],
+    [14, 6, 22, -11, 25],
+    [23, 3, 15, -7, 12],
+    [31, 5, 24, -16, -22],
+    [42, 4, 19, -2, 18],
+    [53, 7, 27, -20, -15],
+    [61, 3, 16, -9, 20],
+    [69, 5, 23, -14, -12],
+    [78, 4, 18, -5, 22],
+    [86, 6, 26, -18, -19],
+    [94, 3, 20, -8, 14],
+  ];
+
+  particleLayout.forEach(([x, size, speed, delay, drift]) => {
+    const particle = document.createElement("span");
+    particle.className = "ambient-particle";
+    particle.style.setProperty("--particle-x", `${x}%`);
+    particle.style.setProperty("--particle-size", `${size}px`);
+    particle.style.setProperty("--particle-speed", `${speed}s`);
+    particle.style.setProperty("--particle-delay", `${delay}s`);
+    particle.style.setProperty("--particle-drift", `${drift}px`);
+    stage.append(particle);
+  });
+
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   pieces.forEach((piece, index) => {

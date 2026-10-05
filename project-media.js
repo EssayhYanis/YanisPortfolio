@@ -24,7 +24,7 @@ window.COLLEGE_MEDIA = [
     year: "2025–2026",
   },
   {
-    title: "Blood & Lineage — gameplay",
+    title: "Blood & Lineage - gameplay",
     course: "Capstone I & II",
     type: "image",
     src: "assets/college-work/blood-and-lineage-minimap.jpg",
@@ -34,7 +34,7 @@ window.COLLEGE_MEDIA = [
     year: "2026",
   },
   {
-    title: "Blood & Lineage — forge",
+    title: "Blood & Lineage - forge",
     course: "Capstone I & II",
     type: "image",
     src: "assets/college-work/blood-and-lineage-forge.jpg",

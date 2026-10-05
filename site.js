@@ -69,7 +69,7 @@
   const capstone = profile.capstone || {};
   const projectLinks = document.querySelector("#capstone-links");
   for (const [key, label] of [
-    ["projectUrl", "View project"],
+    ["projectUrl", "View on Steam"],
     ["videoUrl", "Watch gameplay"],
   ]) {
     const href = safeLink(capstone[key]);

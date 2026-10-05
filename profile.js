@@ -14,7 +14,7 @@ window.PORTFOLIO = {
     caption: "",
   },
   capstone: {
-    projectUrl: "",
+    projectUrl: "https://store.steampowered.com/app/4653740/Blood__Lineage/",
     videoUrl: "",
     image: "", // Example: "assets/blood-and-lineage.webp"; use your own project media.
     imageAlt: "",

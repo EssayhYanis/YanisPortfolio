@@ -409,8 +409,134 @@
     }
   });
 
+  const loadScript = (source) =>
+    new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = source;
+      script.addEventListener("load", resolve, { once: true });
+      script.addEventListener("error", reject, { once: true });
+      document.head.append(script);
+    });
+
+  const prepareProjectGallery = async () => {
+    if (!document.querySelector("#college-media-grid")) return;
+    if (!Array.isArray(window.COLLEGE_MEDIA))
+      await loadScript("project-media.js");
+    if (typeof window.renderCollegeGallery !== "function")
+      await loadScript("project-gallery.js");
+    window.renderCollegeGallery?.();
+  };
+
+  const hydrateRoutedPage = async () => {
+    document.querySelectorAll("[data-name]").forEach((node) => {
+      node.textContent = profile.name?.trim() || "Yanis Essayh";
+    });
+
+    const routedContacts = document.querySelector("#contact-links");
+    if (routedContacts && links.length)
+      routedContacts.replaceChildren(
+        ...links.map(([label, href]) => makeLink(label, href)),
+      );
+
+    const routedProjectLinks = document.querySelector("#capstone-links");
+    if (routedProjectLinks) {
+      for (const [key, label] of [
+        ["projectUrl", "View on Steam"],
+        ["videoUrl", "Watch gameplay"],
+      ]) {
+        const href = safeLink(capstone[key]);
+        if (!href) continue;
+        const link = makeLink(label, href);
+        link.className = "button";
+        routedProjectLinks.append(link);
+        routedProjectLinks.hidden = false;
+      }
+    }
+
+    const routedCapstoneImage = document.querySelector("#capstone-image");
+    if (routedCapstoneImage && imageUrl && capstone.imageAlt) {
+      const revealCapstone = () => {
+        document.querySelector("#capstone-media")?.removeAttribute("hidden");
+      };
+      routedCapstoneImage.addEventListener("load", revealCapstone, {
+        once: true,
+      });
+      routedCapstoneImage.src = imageUrl;
+      routedCapstoneImage.alt = capstone.imageAlt;
+      document.querySelector("#capstone-caption").textContent =
+        capstone.imageCaption || "";
+      if (routedCapstoneImage.complete) revealCapstone();
+    }
+
+    const routedPortrait = document.querySelector("#portrait-image");
+    if (routedPortrait && portraitUrl && portrait.alt) {
+      const revealPortrait = () => {
+        document.querySelector("#portrait")?.removeAttribute("hidden");
+      };
+      routedPortrait.addEventListener("load", revealPortrait, { once: true });
+      routedPortrait.src = portraitUrl;
+      routedPortrait.alt = portrait.alt;
+      document.querySelector("#portrait-caption").textContent =
+        portrait.caption || "";
+      if (routedPortrait.complete) revealPortrait();
+    }
+
+    await prepareProjectGallery();
+  };
+
+  const updateCurrentNavigation = (destination) => {
+    document.querySelectorAll("nav a").forEach((link) => {
+      const linkUrl = new URL(link.href, location.href);
+      if (linkUrl.pathname === destination.pathname)
+        link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+  };
+
+  let routeInProgress = false;
+  const navigateWithoutReload = async (href, pushHistory = true) => {
+    if (routeInProgress) return;
+    routeInProgress = true;
+    const destination = new URL(href, location.href);
+    try {
+      const response = await fetch(destination.href, {
+        headers: { "X-Portfolio-Navigation": "partial" },
+      });
+      if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
+      const nextDocument = new DOMParser().parseFromString(
+        await response.text(),
+        "text/html",
+      );
+      const nextMain = nextDocument.querySelector("main");
+      if (!nextMain) throw new Error("Navigation target has no main content");
+
+      document.querySelector("main").replaceWith(nextMain);
+      document.body.dataset.page = nextDocument.body.dataset.page || "";
+      document.title = nextDocument.title;
+      const nextDescription = nextDocument.querySelector(
+        'meta[name="description"]',
+      )?.content;
+      if (nextDescription)
+        document.querySelector('meta[name="description"]').content =
+          nextDescription;
+      updateCurrentNavigation(destination);
+      if (pushHistory) history.pushState({}, "", destination.href);
+      await hydrateRoutedPage();
+
+      const target = destination.hash
+        ? document.getElementById(decodeURIComponent(destination.hash.slice(1)))
+        : null;
+      if (target) target.scrollIntoView();
+      else window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    } catch {
+      location.assign(destination.href);
+    } finally {
+      routeInProgress = false;
+    }
+  };
+
   document.addEventListener("click", async (event) => {
-    if (!soundEnabled || event.target.closest(".sound-toggle")) return;
+    if (event.target.closest(".sound-toggle")) return;
     const control = event.target.closest("a, button, summary");
     if (!control) return;
     const link = control.closest("a[href]");
@@ -424,18 +550,28 @@
     const isInternalPage =
       destination &&
       destination.origin === location.origin &&
-      destination.href !== location.href &&
+      destination.pathname !== location.pathname &&
+      (destination.pathname.endsWith(".html") ||
+        destination.pathname.endsWith("/")) &&
       !link.hasAttribute("download") &&
       link.target !== "_blank";
 
     if (isInternalPage && isRegularClick) event.preventDefault();
-    await ensureSound();
-    if (isInternalPage && isRegularClick) {
-      playTone(620, 390, 0.16, 0.026);
-      window.setTimeout(() => location.assign(destination.href), 130);
-    } else {
-      playTone(360, 210, 0.09, 0.018);
+    if (soundEnabled) {
+      await ensureSound();
+      playTone(
+        isInternalPage ? 580 : 340,
+        isInternalPage ? 420 : 230,
+        isInternalPage ? 0.12 : 0.07,
+        isInternalPage ? 0.014 : 0.009,
+      );
     }
+    if (isInternalPage && isRegularClick)
+      navigateWithoutReload(destination.href);
+  });
+
+  window.addEventListener("popstate", () => {
+    navigateWithoutReload(location.href, false);
   });
 
   updateSoundToggle();

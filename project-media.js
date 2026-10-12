@@ -44,6 +44,16 @@ window.COLLEGE_MEDIA = [
     year: "2026",
   },
   {
+    title: "Mario-inspired platformer",
+    course: "High Level Development I",
+    type: "video",
+    src: "assets/college-work/videos/mario-platformer.mp4",
+    poster: "assets/college-work/posters/mario-platformer.jpg",
+    description:
+      "A lava-themed Unity level with more than ten enemy and hazard types, boss encounters, toggleable coins, breakable blocks, hidden item boxes, and power-ups.",
+    year: "2024-2025",
+  },
+  {
     title: "Tower Defense",
     course: "Game programming coursework",
     type: "video",

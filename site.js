@@ -279,8 +279,15 @@
   document.body.append(soundToggle);
 
   let audioContext = null;
-  let ambience = null;
-  let soundEnabled = false;
+  let music = null;
+  let soundEnabled = localStorage.getItem("portfolioSound") === "on";
+
+  const updateSoundToggle = () => {
+    soundToggle.setAttribute("aria-pressed", String(soundEnabled));
+    soundToggle.lastElementChild.textContent = soundEnabled
+      ? "Sound on"
+      : "Sound off";
+  };
 
   const playTone = (startFrequency, endFrequency, duration, volume) => {
     if (!soundEnabled || !audioContext) return;
@@ -289,7 +296,10 @@
     const gain = audioContext.createGain();
     oscillator.type = "sine";
     oscillator.frequency.setValueAtTime(startFrequency, now);
-    oscillator.frequency.exponentialRampToValueAtTime(endFrequency, now + duration);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      endFrequency,
+      now + duration,
+    );
     gain.gain.setValueAtTime(volume, now);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
     oscillator.connect(gain).connect(audioContext.destination);
@@ -297,66 +307,144 @@
     oscillator.stop(now + duration);
   };
 
-  const startAmbience = () => {
+  const midiToFrequency = (note) => 440 * 2 ** ((note - 69) / 12);
+
+  const startMusic = () => {
+    if (music || !audioContext || audioContext.state !== "running") return;
     const master = audioContext.createGain();
-    master.gain.value = 0.012;
-    master.connect(audioContext.destination);
-    const tones = [65.41, 98, 130.81].map((frequency, index) => {
+    const filter = audioContext.createBiquadFilter();
+    const delay = audioContext.createDelay(1);
+    const feedback = audioContext.createGain();
+    master.gain.value = 0.15;
+    filter.type = "lowpass";
+    filter.frequency.value = 1700;
+    filter.Q.value = 0.45;
+    delay.delayTime.value = 0.24;
+    feedback.gain.value = 0.17;
+    master.connect(filter).connect(audioContext.destination);
+    filter.connect(delay).connect(feedback).connect(delay);
+    delay.connect(audioContext.destination);
+
+    const playMusicVoice = (
+      note,
+      duration,
+      volume,
+      type = "sine",
+      delayAmount = 0,
+    ) => {
+      if (!soundEnabled || audioContext.state !== "running") return;
+      const now = audioContext.currentTime;
       const oscillator = audioContext.createOscillator();
       const gain = audioContext.createGain();
-      oscillator.type = index === 1 ? "triangle" : "sine";
-      oscillator.frequency.value = frequency;
-      gain.gain.value = index === 0 ? 0.42 : 0.18;
+      oscillator.type = type;
+      oscillator.frequency.value = midiToFrequency(note);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(volume, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
       oscillator.connect(gain).connect(master);
-      oscillator.start();
-      return oscillator;
-    });
-    const lfo = audioContext.createOscillator();
-    const lfoGain = audioContext.createGain();
-    lfo.frequency.value = 0.08;
-    lfoGain.gain.value = 0.004;
-    lfo.connect(lfoGain).connect(master.gain);
-    lfo.start();
-    ambience = { master, tones, lfo };
+      if (delayAmount) {
+        const delaySend = audioContext.createGain();
+        delaySend.gain.value = delayAmount;
+        gain.connect(delaySend).connect(delay);
+      }
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.05);
+    };
+
+    const progression = [
+      [60, 64, 67, 71],
+      [57, 60, 64, 67],
+      [53, 57, 60, 64],
+      [55, 59, 62, 64],
+    ];
+    let step = 0;
+    const playStep = () => {
+      const chord = progression[Math.floor(step / 4) % progression.length];
+      const chordStep = step % 4;
+      if (chordStep === 0) {
+        playMusicVoice(chord[0] - 12, 3.3, 0.032, "sine");
+        playMusicVoice(chord[2] - 12, 3.1, 0.012, "triangle");
+      }
+      playMusicVoice(chord[chordStep], 1.45, 0.07, "sine", 0.4);
+      if (chordStep === 2)
+        playMusicVoice(chord[1] + 12, 1.05, 0.018, "sine", 0.25);
+      step += 1;
+    };
+    playStep();
+    const timer = window.setInterval(playStep, 920);
+    music = { master, timer };
   };
 
-  const stopAmbience = () => {
-    if (!ambience) return;
-    const stoppingAmbience = ambience;
-    ambience = null;
+  const stopMusic = () => {
+    if (!music || !audioContext) return;
+    const stoppingMusic = music;
+    music = null;
+    window.clearInterval(stoppingMusic.timer);
     const now = audioContext.currentTime;
-    stoppingAmbience.master.gain.cancelScheduledValues(now);
-    stoppingAmbience.master.gain.setValueAtTime(
-      stoppingAmbience.master.gain.value,
+    stoppingMusic.master.gain.cancelScheduledValues(now);
+    stoppingMusic.master.gain.setValueAtTime(
+      stoppingMusic.master.gain.value,
       now,
     );
-    stoppingAmbience.master.gain.linearRampToValueAtTime(0, now + 0.18);
-    window.setTimeout(() => {
-      stoppingAmbience.tones.forEach((tone) => tone.stop());
-      stoppingAmbience.lfo.stop();
-    }, 220);
+    stoppingMusic.master.gain.linearRampToValueAtTime(0, now + 0.3);
+    window.setTimeout(() => stoppingMusic.master.disconnect(), 380);
   };
 
-  soundToggle.addEventListener("click", async () => {
+  const ensureSound = async () => {
     if (!audioContext)
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
     if (audioContext.state === "suspended") await audioContext.resume();
+    if (soundEnabled) startMusic();
+  };
+
+  soundToggle.addEventListener("click", async () => {
     soundEnabled = !soundEnabled;
-    soundToggle.setAttribute("aria-pressed", String(soundEnabled));
-    soundToggle.lastElementChild.textContent = soundEnabled
-      ? "Sound on"
-      : "Sound off";
+    localStorage.setItem("portfolioSound", soundEnabled ? "on" : "off");
+    updateSoundToggle();
     if (soundEnabled) {
-      startAmbience();
+      await ensureSound();
       playTone(520, 760, 0.12, 0.025);
     } else {
-      stopAmbience();
+      stopMusic();
     }
   });
 
-  document.addEventListener("click", (event) => {
+  document.addEventListener("click", async (event) => {
     if (!soundEnabled || event.target.closest(".sound-toggle")) return;
-    if (event.target.closest("a, button, summary"))
-      playTone(340, 190, 0.09, 0.018);
+    const control = event.target.closest("a, button, summary");
+    if (!control) return;
+    const link = control.closest("a[href]");
+    const isRegularClick =
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey;
+    const destination = link ? new URL(link.href, location.href) : null;
+    const isInternalPage =
+      destination &&
+      destination.origin === location.origin &&
+      destination.href !== location.href &&
+      !link.hasAttribute("download") &&
+      link.target !== "_blank";
+
+    if (isInternalPage && isRegularClick) event.preventDefault();
+    await ensureSound();
+    if (isInternalPage && isRegularClick) {
+      playTone(620, 390, 0.16, 0.026);
+      window.setTimeout(() => location.assign(destination.href), 130);
+    } else {
+      playTone(360, 210, 0.09, 0.018);
+    }
   });
+
+  updateSoundToggle();
+  if (soundEnabled) {
+    ensureSound().catch(() => {});
+    window.addEventListener(
+      "pointerdown",
+      () => ensureSound().catch(() => {}),
+      { once: true, capture: true },
+    );
+  }
 })();

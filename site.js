@@ -281,6 +281,7 @@
   let audioContext = null;
   let music = null;
   let soundEnabled = localStorage.getItem("portfolioSound") === "on";
+  const audioSessionId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
   const updateSoundToggle = () => {
     soundToggle.setAttribute("aria-pressed", String(soundEnabled));
@@ -311,6 +312,7 @@
 
   const startMusic = () => {
     if (music || !audioContext || audioContext.state !== "running") return;
+    soundToggle.dataset.audioSession = audioSessionId;
     const master = audioContext.createGain();
     const filter = audioContext.createBiquadFilter();
     const delay = audioContext.createDelay(1);
@@ -369,6 +371,7 @@
       if (chordStep === 2)
         playMusicVoice(chord[1] + 12, 1.05, 0.018, "sine", 0.25);
       step += 1;
+      soundToggle.dataset.musicStep = String(step);
     };
     playStep();
     const timer = window.setInterval(playStep, 920);
@@ -421,9 +424,9 @@
   const prepareProjectGallery = async () => {
     if (!document.querySelector("#college-media-grid")) return;
     if (!Array.isArray(window.COLLEGE_MEDIA))
-      await loadScript("project-media.js");
+      await loadScript("project-media.js?v=20261012-2");
     if (typeof window.renderCollegeGallery !== "function")
-      await loadScript("project-gallery.js");
+      await loadScript("project-gallery.js?v=20261012-2");
     window.renderCollegeGallery?.();
   };
 
@@ -557,14 +560,9 @@
       link.target !== "_blank";
 
     if (isInternalPage && isRegularClick) event.preventDefault();
-    if (soundEnabled) {
+    if (soundEnabled && !link) {
       await ensureSound();
-      playTone(
-        isInternalPage ? 580 : 340,
-        isInternalPage ? 420 : 230,
-        isInternalPage ? 0.12 : 0.07,
-        isInternalPage ? 0.014 : 0.009,
-      );
+      playTone(340, 230, 0.07, 0.008);
     }
     if (isInternalPage && isRegularClick)
       navigateWithoutReload(destination.href);
